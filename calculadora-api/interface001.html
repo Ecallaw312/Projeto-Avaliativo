@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Calculadora API</title>
+</head>
+<body>
+  <h1>Calculadora API</h1>
+
+  <label>Número 1:</label>
+  <input type="number" id="numero1"><br><br>
+
+  <label>Número 2:</label>
+  <input type="number" id="numero2"><br><br>
+
+  <label>Operação:</label>
+  <select id="operacao">
+    <option value="somar">Soma</option>
+    <option value="subtrair">Subtração</option>
+    <option value="multiplicar">Multiplicação</option>
+    <option value="dividir">Divisão</option>
+    <option value="potencia">Potência</option>
+    <option value="raiz">Raiz</option>
+  </select><br><br>
+
+  <button onclick="calcular()">Calcular</button>
+
+  <h2>Resultado:</h2>
+  <div id="resultado"></div>
+
+  <script>
+    async function calcular() {
+      const numero1 = parseFloat(document.getElementById("numero1").value);
+      const numero2 = parseFloat(document.getElementById("numero2").value);
+      const operacao = document.getElementById("operacao").value;
+
+      const response = await fetch(`http://localhost:8000/${operacao}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ numero1, numero2 })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        document.getElementById("resultado").innerText = "Erro: " + error.detail;
+        return;
+      }
+
+      const data = await response.json();
+      document.getElementById("resultado").innerText =
+        'Operação: ' + data.operacao + '\nResultado: ' + data.resultado;
+    }
+  </script>
+</body>
+</html>
